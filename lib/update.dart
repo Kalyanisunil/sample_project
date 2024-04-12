@@ -13,6 +13,21 @@ class _UpdateDonorState extends State<UpdateDonor> {
   TextEditingController donorPhone = TextEditingController();
   TextEditingController donorAge = TextEditingController();
   TextEditingController donorName = TextEditingController();
+  // ignore: non_constant_identifier_names
+  void Update(String docId) {
+    print('Selected Group: $selectedGroup');
+    print('Donor Name: ${donorName.text}');
+    print('Donor Phone: ${donorPhone.text}');
+    print('Donor Age: ${donorAge.text}');
+    final data = {
+      'name': donorName.text,
+      'phone': donorPhone.text,
+      'age': donorAge.text,
+      'group': selectedGroup
+    };
+    donor.doc(docId).update(data).then((value) => Navigator.pop(context));
+  }
+
   final List<String> bloodgroups = [
     'A+',
     'A-',
@@ -27,24 +42,20 @@ class _UpdateDonorState extends State<UpdateDonor> {
   final CollectionReference donor =
       FirebaseFirestore.instance.collection('donor');
 
-  // TextEditingController donorPhone = TextEditingController();
-
-  //add donor function
-  // void addDonor() {
-  //   final donorData = {
-  //     'name': donorName.text,
-  //     'age': donorAge.text,
-  //     'group': selectedGroup,
-  //     'phone': '918874852'
-  //   };
-  //   donor.add(donorData);
-  // }
-
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map?;
+    donorName.text = args!['name'];
+    donorAge.text = args['age'];
+    donorPhone.text = args['phone'];
+    selectedGroup = args['group'];
+    final docId = args['id'];
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Donors"),
+        title: const Text(
+          "Update Donors",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.red,
       ),
       body: SingleChildScrollView(
@@ -89,20 +100,27 @@ class _UpdateDonorState extends State<UpdateDonor> {
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: DropdownButtonFormField(
-                    decoration:
-                        InputDecoration(label: Text("Select blood group")),
-                    items: bloodgroups
-                        .map((e) => DropdownMenuItem(
-                              child: Text(e),
-                              value: e,
-                            ))
-                        .toList(),
-                    onChanged: (val) {
-                      selectedGroup = val as String;
-                    }),
+                  decoration:
+                      InputDecoration(label: Text("Select blood group")),
+                  items: bloodgroups
+                      .map((e) => DropdownMenuItem(
+                            child: Text(e),
+                            value: e,
+                          ))
+                      .toList(),
+                  onChanged: (val) {
+                    print(val);
+                    setState(() {
+                      selectedGroup = val as String?;
+                    });
+                  },
+                  value: selectedGroup,
+                ),
               ),
               ElevatedButton(
                 onPressed: () {
+                  // Object? data;
+                  Update(docId);
                   // Navigator.pop(context);
                 },
                 style: ButtonStyle(

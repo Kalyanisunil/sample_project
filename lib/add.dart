@@ -44,7 +44,10 @@ class _AddUserState extends State<AddUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Donors"),
+        title: const Text(
+          "Add Donors",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.red,
       ),
       body: SingleChildScrollView(
